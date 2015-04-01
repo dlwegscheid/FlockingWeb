@@ -25,7 +25,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/robin"
             android:id="@+id/RobinText"
-            android:layout_gravity="center_vertical|start"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textStyle="bold" />
@@ -55,7 +55,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/parrot"
             android:id="@+id/ParrotText"
-            android:layout_gravity="start|center_vertical"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textStyle="bold" />
@@ -85,7 +85,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/swallow"
             android:id="@+id/SwallowText"
-            android:layout_gravity="start|center_vertical"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textStyle="bold" />
@@ -115,7 +115,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/bananaquit"
             android:id="@+id/BananaText"
-            android:layout_gravity="start|center_vertical"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textStyle="bold" />
@@ -145,7 +145,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/ostrich"
             android:id="@+id/OstrichText"
-            android:layout_gravity="start|center_vertical"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="25dp"
             android:layout_marginStart="25dp"
             android:textStyle="bold" />
