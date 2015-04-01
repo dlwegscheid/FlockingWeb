@@ -11,7 +11,7 @@ import android.graphics.Rect;
  */
 public class Bird {
     /**
-     * The image for the actual bird.
+     * The image for the actual bird. 
      */
     private Bitmap bird;
 
