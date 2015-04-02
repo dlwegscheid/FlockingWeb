@@ -21,7 +21,7 @@ public class Cloud {
     private static final String UTF8 = "UTF-8";
 
     public enum Status {
-        GOOD, BAD_LOGIN, BAD_CONNECTION
+        GOOD, BAD_LOGIN, BAD_CONNECTION, DUPLICATE_LOGIN
     }
 
     public Status loginRegister(String user, String password, boolean register) {
@@ -46,7 +46,7 @@ public class Cloud {
             }
 
             stream = conn.getInputStream();
-            // logStream(stream);
+            //logStream(stream);
             status = isGoodResult(stream);
 
         } catch (MalformedURLException e) {
@@ -83,7 +83,7 @@ public class Cloud {
             }
 
             stream = conn.getInputStream();
-            // logStream(stream);
+            //logStream(stream);
             status = isGoodResult(stream);
 
         } catch (MalformedURLException e) {
@@ -119,6 +119,9 @@ public class Cloud {
             if(status.equals("yes")) {
                 return Status.GOOD;
             } else if(status.equals("no")) {
+                if(xmlR.getAttributeValue(null, "msg").equals("duplicateusername")) {
+                    return Status.DUPLICATE_LOGIN;
+                }
                 return Status.BAD_LOGIN;
             } else {
                 return Status.BAD_CONNECTION;

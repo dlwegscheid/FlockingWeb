@@ -73,6 +73,9 @@ public class LoginDlg extends DialogFragment {
                             case BAD_CONNECTION:
                                 Toast.makeText(getActivity(), R.string.server_failure, Toast.LENGTH_SHORT).show();
                                 break;
+                            case DUPLICATE_LOGIN:
+                                Toast.makeText(getActivity(), R.string.duplicate_username, Toast.LENGTH_SHORT).show();
+                                break;
                             case GOOD:
                                 Intent intent = new Intent(getActivity(), GameActivity.class);
                                 intent.putExtra(USER_NAME, user);

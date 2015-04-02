@@ -24,6 +24,7 @@
     <string name="reset">Reset</string>
     <string name="rules">Rules</string>
     <string name="login_failure">Invalid username or password</string>
+    <string name="duplicate_username">Duplicate username</string>
     <string name="server_failure">Failed to connect to server</string>
     <string name="display_rules">Display Rules</string>
     <string name="logging_in">Logging in&#8230;</string>
