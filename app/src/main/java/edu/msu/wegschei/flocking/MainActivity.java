@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
+// magic = 18qu27wy36et45r
 
 public class MainActivity extends ActionBarActivity {
     private EditText playerOne;
@@ -23,8 +23,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.playerOne = (EditText)findViewById(R.id.playerOne);
-        this.playerTwo = (EditText)findViewById(R.id.playerTwo);
+        this.playerOne = (EditText)findViewById(R.id.textUserName);
+        this.playerTwo = (EditText)findViewById(R.id.textPassword);
 
         if(savedInstanceState != null) {
             // We have saved state
@@ -78,11 +78,14 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void onStartGame(View view){
+    public void onLogin(View view){
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra(GameActivity.PLAYER_ONE, playerOne.getText().toString());
         intent.putExtra(GameActivity.PLAYER_TWO, playerTwo.getText().toString());
 
         startActivity(intent);
+    }
+    public void onRegister(View view){
+        // stub
     }
 }
