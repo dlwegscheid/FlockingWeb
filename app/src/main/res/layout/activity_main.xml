@@ -122,7 +122,11 @@
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
         android:onClick="onLogin"
-        android:layout_above="@+id/buttonRegister" />
+        android:layout_above="@+id/buttonRegister"
+        android:layout_alignStart="@+id/buttonRegister"
+        android:layout_alignEnd="@+id/buttonRegister"
+        android:layout_alignLeft="@+id/buttonRegister"
+        android:layout_alignRight="@+id/buttonRegister" />
 
     <Button
         android:layout_width="wrap_content"
@@ -130,10 +134,7 @@
         android:text="@string/register"
         android:id="@+id/buttonRegister"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/button"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignEnd="@+id/button"
-        android:layout_alignStart="@+id/button"
-        android:onClick="onRegister" />
+        android:onClick="onRegister"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

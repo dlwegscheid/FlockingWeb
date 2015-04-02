@@ -12,19 +12,19 @@ import android.widget.TextView;
 // magic = 18qu27wy36et45r
 
 public class MainActivity extends ActionBarActivity {
-    private EditText playerOne;
-    private EditText playerTwo;
+    private EditText textUserName;
+    private EditText textPassword;
 
-    private final static String PLAYER_ONE = "MainActivity.playerOne";
-    private final static String PLAYER_TWO = "MainActivity.playerTwo";
+    private final static String USER_NAME = "MainActivity.userName";
+    private final static String PASSWORD = "MainActivity.password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.playerOne = (EditText)findViewById(R.id.textUserName);
-        this.playerTwo = (EditText)findViewById(R.id.textPassword);
+        this.textUserName = (EditText)findViewById(R.id.textUserName);
+        this.textPassword = (EditText)findViewById(R.id.textPassword);
 
         if(savedInstanceState != null) {
             // We have saved state
@@ -33,21 +33,21 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void loadInstanceState(Bundle bundle) {
-        String nameOne = bundle.getString(PLAYER_ONE);
-        String nameTwo = bundle.getString(PLAYER_TWO);
+        String userName = bundle.getString(USER_NAME);
+        String password = bundle.getString(PASSWORD);
 
-        playerOne.setText(nameOne, TextView.BufferType.EDITABLE);
-        playerTwo.setText(nameTwo, TextView.BufferType.EDITABLE);
+        textUserName.setText(userName, TextView.BufferType.EDITABLE);
+        textPassword.setText(password, TextView.BufferType.EDITABLE);
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
-        String nameOne = playerOne.getText().toString();
-        String nameTwo = playerTwo.getText().toString();
+        String userName = textUserName.getText().toString();
+        String password = textPassword.getText().toString();
 
-        bundle.putString(PLAYER_ONE, nameOne);
-        bundle.putString(PLAYER_TWO, nameTwo);
+        bundle.putString(USER_NAME, userName);
+        bundle.putString(PASSWORD, password);
     }
 
     @Override
@@ -79,13 +79,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onLogin(View view){
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(GameActivity.PLAYER_ONE, playerOne.getText().toString());
-        intent.putExtra(GameActivity.PLAYER_TWO, playerTwo.getText().toString());
-
-        startActivity(intent);
+        LoginDlg loginDlg = new LoginDlg();
+        loginDlg.setUser(textUserName.getText().toString());
+        loginDlg.setPassword(textPassword.getText().toString());
+        loginDlg.setRegister(false);
+        loginDlg.show(this.getFragmentManager(), "logging_in");
     }
     public void onRegister(View view){
-        // stub
+        LoginDlg loginDlg = new LoginDlg();
+        loginDlg.setUser(textUserName.getText().toString());
+        loginDlg.setPassword(textPassword.getText().toString());
+        loginDlg.setRegister(true);
+        loginDlg.show(this.getFragmentManager(), "registering");
     }
 }

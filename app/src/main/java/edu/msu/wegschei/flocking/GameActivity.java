@@ -45,11 +45,9 @@ public class GameActivity extends ActionBarActivity {
         placeButton = (Button) findViewById(R.id.buttonPlace);
         textView = (TextView)findViewById(R.id.textPlayer);
 
-        //Gets the players' names that came from MainActivity, stores them in variables here
-        Bundle extras = getIntent().getExtras();
-        playerNameOne = extras.getString(PLAYER_ONE);
+        playerNameOne = "Player 1";//extras.getString(PLAYER_ONE);
         players.add(playerNameOne);
-        playerNameTwo = extras.getString(PLAYER_TWO);
+        playerNameTwo = "Player 2";//extras.getString(PLAYER_ONE);
         players.add(playerNameTwo);
         gameView.setNames(playerNameOne, playerNameTwo);
 
