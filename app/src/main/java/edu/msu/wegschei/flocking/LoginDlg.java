@@ -51,6 +51,7 @@ public class LoginDlg extends DialogFragment {
         });
 
         final AlertDialog dlg = builder.create();
+        final boolean reg = register;
 
         new Thread(new Runnable() {
             @Override
@@ -77,10 +78,16 @@ public class LoginDlg extends DialogFragment {
                                 Toast.makeText(getActivity(), R.string.duplicate_username, Toast.LENGTH_SHORT).show();
                                 break;
                             case GOOD:
-                                Intent intent = new Intent(getActivity(), GameActivity.class);
-                                intent.putExtra(USER_NAME, user);
+                                if(reg) {
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
 
-                                startActivity(intent);
+                                    startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(getActivity(), GameActivity.class);
+                                    intent.putExtra(USER_NAME, user);
+
+                                    startActivity(intent);
+                                }
                                 break;
                         }
                     }

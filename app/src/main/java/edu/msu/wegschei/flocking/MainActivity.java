@@ -1,22 +1,28 @@
 package edu.msu.wegschei.flocking;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-// magic = 18qu27wy36et45r
 
 public class MainActivity extends ActionBarActivity {
     private EditText textUserName;
     private EditText textPassword;
+    private CheckBox checkRemember;
 
-    private final static String USER_NAME = "MainActivity.userName";
+    private final static String USER_NAME = "MainActivity.username";
     private final static String PASSWORD = "MainActivity.password";
+    private final static String PREFERENCES = "preferences";
+    private final static String REMEMBER = "remember";
+    private final static String EMPTY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +31,7 @@ public class MainActivity extends ActionBarActivity {
 
         this.textUserName = (EditText)findViewById(R.id.textUserName);
         this.textPassword = (EditText)findViewById(R.id.textPassword);
+        this.checkRemember = (CheckBox)findViewById(R.id.checkRemember);
 
         if(savedInstanceState != null) {
             // We have saved state
@@ -78,18 +85,47 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void onLogin(View view){
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        SharedPreferences settings = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString(USER_NAME, textUserName.getText().toString());
+        editor.putString(PASSWORD, textPassword.getText().toString());
+        editor.putBoolean(REMEMBER, checkRemember.isChecked());
+        editor.apply();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        SharedPreferences settings = getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+
+        boolean remember = settings.getBoolean(REMEMBER, false);
+        if(remember) {
+            String user = settings.getString(USER_NAME, EMPTY);
+            String pass = settings.getString(PASSWORD, EMPTY);
+
+            textUserName.setText(user);
+            textPassword.setText(pass);
+            checkRemember.setChecked(remember);
+        }
+    }
+
+    public void onLogin(View view) {
         LoginDlg loginDlg = new LoginDlg();
         loginDlg.setUser(textUserName.getText().toString());
         loginDlg.setPassword(textPassword.getText().toString());
         loginDlg.setRegister(false);
         loginDlg.show(this.getFragmentManager(), "logging_in");
     }
-    public void onRegister(View view){
-        LoginDlg loginDlg = new LoginDlg();
-        loginDlg.setUser(textUserName.getText().toString());
-        loginDlg.setPassword(textPassword.getText().toString());
-        loginDlg.setRegister(true);
-        loginDlg.show(this.getFragmentManager(), "registering");
+
+    public void onRegister(View view) {
+        Intent intent = new Intent(this, RegisterActivity.class);
+
+        startActivity(intent);
     }
 }

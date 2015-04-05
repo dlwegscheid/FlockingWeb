@@ -18,12 +18,14 @@
     <string name="user_name">User Name</string>
     <string name="remember">Remember</string>
     <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="place_button">Place</string>
     <string name="game_title">The Flocking Game</string>
     <string name="title_activity_score">Results</string>
     <string name="reset">Reset</string>
     <string name="rules">Rules</string>
     <string name="login_failure">Invalid username or password</string>
+    <string name="passwords_dont_match">Passwords do not match, try again</string>
     <string name="duplicate_username">Duplicate username</string>
     <string name="server_failure">Failed to connect to server</string>
     <string name="display_rules">Display Rules</string>
@@ -40,5 +42,6 @@
        If the player successfully placed the bird, the second players\' bird appears and they can move it into place, then clicks the button. Again, the game tests to see if this bird is overlapping any other bird or extends outside the square.
         If it does, this player loses and the game is over.
         This ends a round.\n\n\t\tFor the next round, the birds from the first round are still on the screen and the order the players go in reverse.</string>
+    <string name="title_activity_register">Register New User</string>
 
 </resources>
