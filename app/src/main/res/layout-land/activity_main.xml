@@ -125,6 +125,7 @@
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/button"
             android:layout_toEndOf="@+id/button"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp" />
     </RelativeLayout>
 </LinearLayout>

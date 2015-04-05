@@ -16,7 +16,7 @@ import java.io.InputStream;
 public class LoginDlg extends DialogFragment {
     private String user;
     private String password;
-    private boolean register;
+    private boolean register = false;
 
     private final static String USER_NAME = "LoginDlg.userName";
     private final static String PASSWORD = "LoginDlg.password";
@@ -37,11 +37,16 @@ public class LoginDlg extends DialogFragment {
             password = bundle.getString(PASSWORD);
             register = bundle.getBoolean(REGISTER);
         }
+        cancel = false;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Set the title
-        builder.setTitle(R.string.logging_in);
+        if(register) {
+            builder.setTitle(R.string.registering);
+        } else {
+            builder.setTitle(R.string.logging_in);
+        }
 
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
