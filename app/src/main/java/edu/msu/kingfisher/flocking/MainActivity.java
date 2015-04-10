@@ -1,4 +1,4 @@
-package edu.msu.wegschei.flocking;
+package edu.msu.kingfisher.flocking;
 
 import android.app.AlertDialog;
 import android.content.Context;

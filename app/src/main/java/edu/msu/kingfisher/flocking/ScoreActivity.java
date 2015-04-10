@@ -1,4 +1,4 @@
-package edu.msu.wegschei.flocking;
+package edu.msu.kingfisher.flocking;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;

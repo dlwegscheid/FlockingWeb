@@ -1,13 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.msu.wegschei.flocking.GameActivity"
+    tools:context="edu.msu.kingfisher.flocking.GameActivity"
     android:orientation="vertical">
 
     <view
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        class="edu.msu.wegschei.flocking.GameView"
+        class="edu.msu.kingfisher.flocking.GameView"
         android:id="@+id/gameView"
         android:focusableInTouchMode="false"
         android:layout_weight="6" />

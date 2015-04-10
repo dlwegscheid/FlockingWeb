@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Flocking Web</string>
+    <string name="app_name">Kingfisher Flocking Web</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_selection">Select your flocker!</string>
     <string name="login">Log in</string>
