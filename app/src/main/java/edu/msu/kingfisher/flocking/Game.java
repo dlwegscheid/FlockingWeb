@@ -9,9 +9,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 /**
@@ -391,5 +398,15 @@ public class  Game {
 
     public State getState() {
         return state;
+    }
+
+    public void saveXml(XmlSerializer xml) throws IOException {
+        // save the state of the game into xml (see Step 5 for examples)
+        // you will have to call bird.saveXml(xml) for each bird in the collection
+    }
+
+    public void loadXml(XmlPullParser xml) throws IOException, XmlPullParserException {
+        // load the game from xml
+        // you will have to call bird.loadXml(xml) for each bird in the collection
     }
 }

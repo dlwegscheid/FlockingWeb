@@ -83,7 +83,7 @@ public class LoginDlg extends DialogFragment {
 
                                     startActivity(intent);
                                 } else {
-                                    Intent intent = new Intent(getActivity(), GameActivity.class);
+                                    Intent intent = new Intent(getActivity(), PollingActivity.class);
                                     intent.putExtra(USER_NAME, user);
 
                                     startActivity(intent);

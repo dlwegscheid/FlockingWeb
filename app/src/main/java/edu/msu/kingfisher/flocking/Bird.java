@@ -6,6 +6,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+
 /**
  * Class to describe a Bird object
  */
@@ -164,5 +170,13 @@ public class Bird {
         // Draw the bitmap
         canvas.drawBitmap(bird, 0, 0, null);
         canvas.restore();
+    }
+
+    public void saveXml(XmlSerializer xml) throws IOException {
+        // save the bird into xml (see Step 5 for examples)
+    }
+
+    public void loadXml(XmlPullParser xml) throws IOException, XmlPullParserException {
+        // load the bird from xml
     }
 }
