@@ -54,8 +54,11 @@ public class GameActivity extends ActionBarActivity {
         if(bundle != null) {
             gameView.loadInstanceState(bundle);
         } else {
-            gameView.advanceGame(-1);
+            //gameView.advanceGame(-1);
+            startPolling();
         }
+
+
     }
 
     @Override
@@ -141,5 +144,11 @@ public class GameActivity extends ActionBarActivity {
             }
             gameView.advanceGame(birdID);
         }
+    }
+
+    private void startPolling() {
+        PollingDlg pollDlg = new PollingDlg();
+        pollDlg.setGame(gameView.getGame());
+        pollDlg.show(this.getFragmentManager(), "polling");
     }
 }

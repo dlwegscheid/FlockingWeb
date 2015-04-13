@@ -78,4 +78,8 @@ public class GameView extends View {
     public Game.State getState() {return game.getState();}
 
     public void end() {game.end();}
+
+    public Game getGame() {
+        return game;
+    }
 }

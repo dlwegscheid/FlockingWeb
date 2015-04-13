@@ -17,11 +17,12 @@ import java.net.URL;
 public class Cloud {
     private final static String LOGIN_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-login.php";
     private final static String REGISTER_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-createuser.php";
+    private final static String POLL_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-poll.php";
     private final static String MAGIC = "18qu27wy36et45r";
     private static final String UTF8 = "UTF-8";
 
     public enum Status {
-        GOOD, BAD_LOGIN, BAD_CONNECTION, DUPLICATE_LOGIN
+        GOOD, BAD_LOGIN, BAD_CONNECTION, DUPLICATE_LOGIN, UPDATE
     }
 
     public Status loginRegister(String user, String password, boolean register) {
@@ -67,44 +68,28 @@ public class Cloud {
         return status;
     }
 
-    public Status register(String user, String password) {
-        // Create a get query
-        String query = REGISTER_URL + "?user=" + user + "&password=" + password + "&magic=" + MAGIC;
-        InputStream stream = null;
-        Status status;
-
+    public InputStream pollLoad() {
+        String query = POLL_URL;
         try {
             URL url = new URL(query);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             int responseCode = conn.getResponseCode();
             if(responseCode != HttpURLConnection.HTTP_OK) {
-                return Status.BAD_CONNECTION;
+                return null;
             }
 
-            stream = conn.getInputStream();
-            //logStream(stream);
-            status = isGoodResult(stream);
+            return conn.getInputStream();
 
         } catch (MalformedURLException e) {
             // Should never happen
-            return Status.BAD_CONNECTION;
+            return null;
         } catch (IOException ex) {
-            return Status.BAD_CONNECTION;
-        } finally {
-            if(stream != null) {
-                try {
-                    stream.close();
-                } catch(IOException ex) {
-                    // Fail silently
-                }
-            }
+            return null;
         }
-
-        return status;
     }
 
-    public static Status isGoodResult(InputStream stream) {
+    public Status isGoodResult(InputStream stream) {
         /**
          * Create an XML parser for the result
          */
@@ -119,10 +104,12 @@ public class Cloud {
             if(status.equals("yes")) {
                 return Status.GOOD;
             } else if(status.equals("no")) {
-                if(xmlR.getAttributeValue(null, "msg").equals("duplicateusername")) {
+                if (xmlR.getAttributeValue(null, "msg").equals("duplicateusername")) {
                     return Status.DUPLICATE_LOGIN;
                 }
                 return Status.BAD_LOGIN;
+            } else if(status.equals("update")) {
+                return Status.UPDATE;
             } else {
                 return Status.BAD_CONNECTION;
             }
@@ -147,5 +134,26 @@ public class Cloud {
         } catch (IOException ex) {
             return;
         }
+    }
+
+    /**
+     * Skip the XML parser to the end tag for whatever
+     * tag we are currently within.
+     * @param xml the parser
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public static void skipToEndTag(XmlPullParser xml)
+            throws IOException, XmlPullParserException {
+        int tag;
+        do
+        {
+            tag = xml.next();
+            if(tag == XmlPullParser.START_TAG) {
+                // Recurse over any start tag
+                skipToEndTag(xml);
+            }
+        } while(tag != XmlPullParser.END_TAG &&
+                tag != XmlPullParser.END_DOCUMENT);
     }
 }
