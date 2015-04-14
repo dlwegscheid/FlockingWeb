@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,8 +18,13 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -366,6 +372,23 @@ public class  Game {
                 }
                 break;
         }
+
+        // TEMPORARY!!!
+        try {
+            XmlSerializer xml = Xml.newSerializer();
+            StringWriter writer = new StringWriter();
+
+            xml.setOutput(writer);
+            xml.startDocument("UTF-8", true);
+            saveXml(xml);
+
+            xml.endDocument();
+
+            String str = writer.toString();
+            Log.e("FinalXMLString: ", str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setNames(String p1, String p2) {
@@ -403,10 +426,74 @@ public class  Game {
     public void saveXml(XmlSerializer xml) throws IOException {
         // save the state of the game into xml (see Step 5 for examples)
         // you will have to call bird.saveXml(xml) for each bird in the collection
+
+
+        xml.startTag(null, "game");
+
+
+        for(Bird bird : birds) {
+            bird.saveXml(xml);
+        }
+
+        xml.endTag(null, "game");
+
+
+
+//        Log.e("SaveXml", "String");
+//        InputStream xmlStrStream = new ByteArrayInputStream(xmlStr.getBytes(StandardCharsets.UTF_8));
+//        logStream(xmlStrStream);
+
+
+        //Log.i("XML String: ", xmlStr);
+
+
+        //return true;
+        return;
     }
 
-    public void loadXml(XmlPullParser xml) throws IOException, XmlPullParserException {
+    public void loadXml(XmlPullParser xmlR) throws IOException, XmlPullParserException {
         // load the game from xml
         // you will have to call bird.loadXml(xml) for each bird in the collection
+
+
+            xmlR.require(XmlPullParser.START_TAG, null, "game");
+
+            String x;
+            String y;
+            Integer id;
+
+            try {
+
+                xmlR.nextTag();
+
+                x = xmlR.getAttributeValue(null, "x");
+                y = xmlR.getAttributeValue(null, "y");
+                id = Integer.parseInt(xmlR.getAttributeValue(null, "bitmapId"));
+
+
+
+            } catch (XmlPullParserException ex){
+                ex.printStackTrace();
+            }
+
+            dragging = null;
+
     }
+
+    // Test Code to read stream.
+    public static void logStream(InputStream stream) {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(stream));
+
+        Log.e("476", "logStream: If you leave this in, code after will not work!");
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Log.e("476", line);
+            }
+        } catch (IOException ex) {
+            return;
+        }
+    }
+
 }

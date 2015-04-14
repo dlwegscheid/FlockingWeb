@@ -5,12 +5,22 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.Log;
+import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Class to describe a Bird object
@@ -172,11 +182,52 @@ public class Bird {
         canvas.restore();
     }
 
+
+    /**
+     * Saving the bird XML
+     * @param xml
+     * @throws IOException
+     */
     public void saveXml(XmlSerializer xml) throws IOException {
         // save the bird into xml (see Step 5 for examples)
+
+        xml.startTag(null, "bird");
+        xml.attribute(null, "x", Float.toString(x));
+        xml.attribute(null, "y", Float.toString(y));
+        xml.attribute(null, "bitmapId", Integer.toString(id));
+
+        xml.endTag(null, "bird");
+
+
+        //Log.i("XML String: ", xmlStr);
+
+        //return true;
+        return;
+
     }
 
-    public void loadXml(XmlPullParser xml) throws IOException, XmlPullParserException {
+
+    public void loadXml(XmlPullParser xmlR) throws IOException, XmlPullParserException {
         // load the bird from xml
+
+        try {
+
+            xmlR.nextTag();      // Advance to first tag
+            xmlR.require(XmlPullParser.START_TAG, null, "bird");
+
+            x = Float.parseFloat(xmlR.getAttributeValue(null, "x"));
+            y = Float.parseFloat(xmlR.getAttributeValue(null, "y"));
+            id = Integer.parseInt(xmlR.getAttributeValue(null, "bitmapId"));
+
+
+            // We are done
+        } catch(XmlPullParserException ex) {
+            return;
+        } catch(IOException ex) {
+            return;
+        }
+
+
     }
+
 }
