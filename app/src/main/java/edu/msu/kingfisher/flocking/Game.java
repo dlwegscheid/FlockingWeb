@@ -121,6 +121,7 @@ public class  Game {
     private final static String PLAYER_TWO = "Game.playerTwo";
     private final static String STATE = "Game.state";
     private final static String ORDER = "Game.order";
+    private final static String LAST = "Game.last";
 
     public enum State {
         START,
@@ -137,6 +138,8 @@ public class  Game {
      */
     private String playerOne;
     private String playerTwo;
+
+    private boolean lastPlace = true;
 
     public Game(Context context, View parent) {
         parentContext = context;
@@ -249,6 +252,7 @@ public class  Game {
         state = (State) bundle.getSerializable(STATE);
         player1First = bundle.getBoolean(ORDER);
         int nextId = bundle.getInt(NEXT_ID);
+        lastPlace = bundle.getBoolean(LAST);
 
         birds.clear();
         dragging = null;
@@ -303,6 +307,7 @@ public class  Game {
         bundle.putString(PLAYER_TWO, playerTwo);
         bundle.putSerializable(STATE, state);
         bundle.putBoolean(ORDER, player1First);
+        bundle.putBoolean(LAST, lastPlace);
     }
 
     private void startSelectionActivity(String name){
@@ -421,6 +426,10 @@ public class  Game {
 
     public State getState() {
         return state;
+    }
+
+    public void setLastPlace(boolean lastPlace) {
+        this.lastPlace = lastPlace;
     }
 
     public void saveXml(XmlSerializer xml) throws IOException {

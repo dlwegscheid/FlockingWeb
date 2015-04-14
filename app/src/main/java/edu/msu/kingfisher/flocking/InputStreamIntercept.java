@@ -29,7 +29,7 @@ public class InputStreamIntercept extends FilterInputStream {
 
     /**
      * Intercept read() and store the character for output
-     * @returns -1 if nothing read or the character read
+     * @return -1 if nothing read or the character read
      */
     @Override
     public int read() throws IOException {
@@ -55,7 +55,7 @@ public class InputStreamIntercept extends FilterInputStream {
 
     /**
      * Handle a new character. We output whenever we get a newline
-     * @param ch
+     * @param ch char
      */
     private void newChar(byte ch) {
         if(ch == 10) {

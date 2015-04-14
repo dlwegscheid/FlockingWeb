@@ -9,9 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import android.widget.Toast;
 
 public class GameActivity extends ActionBarActivity {
 
@@ -26,8 +24,8 @@ public class GameActivity extends ActionBarActivity {
     public final static String MESSAGE_TEXT = "GameActivity.messageText";
     public final static String BUTTON_TEXT = "GameActivity.buttonText";
 
-    private String playerNameOne;
-    private String playerNameTwo;
+    private String userName;
+    private String password;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -40,9 +38,9 @@ public class GameActivity extends ActionBarActivity {
         textView = (TextView)findViewById(R.id.textPlayer);
 
         Bundle extras = getIntent().getExtras();
-        playerNameOne = extras.getString(LoginDlg.USER_NAME);
-        playerNameTwo = extras.getString(LoginDlg.PASSWORD);
-        game.setUser(playerNameOne, playerNameTwo);
+        userName = extras.getString(LoginDlg.USER_NAME);
+        password = extras.getString(LoginDlg.PASSWORD);
+        game.setUser(userName, password);
 
         if(bundle != null) {
             gameView.loadInstanceState(bundle);
@@ -50,8 +48,6 @@ public class GameActivity extends ActionBarActivity {
             //gameView.advanceGame(-1);
             startPolling();
         }
-
-
     }
 
     @Override
@@ -77,14 +73,24 @@ public class GameActivity extends ActionBarActivity {
     }
 
     public void onPlace(View view) {
-        gameView.onPlace();
+        CharSequence text;
+
+        if(game.canPlace()) {
+            text = "Bird Placed";
+            game.advanceGame(-1);
+        } else {
+            text = "Invalid Placement";
+            game.end();
+        }
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        toast.show();
 
         Game.State newState = game.getState();
         if(newState ==  Game.State.PLAYER_ONE_WON) {
-            textView.setText(playerNameOne + " wins!");
+            textView.setText(userName + " wins!");
             placeButton.setText("Continue");
         } else if (newState ==  Game.State.PLAYER_TWO_WON) {
-            textView.setText(playerNameTwo + " wins!");
+            textView.setText(password + " wins!");
             placeButton.setText("Continue");
         }
     }
@@ -107,11 +113,26 @@ public class GameActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
+            Bundle extras = data.getExtras();
+            int birdID = extras.getInt("BirdImageID");
+            textView.setText("Place your bird!");
+            game.advanceGame(birdID);
+        }
     }
 
     private void startPolling() {
         PollingDlg pollDlg = new PollingDlg();
-        pollDlg.setGame(gameView.getGame());
+        pollDlg.setGame(game);
         pollDlg.show(this.getFragmentManager(), "polling");
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

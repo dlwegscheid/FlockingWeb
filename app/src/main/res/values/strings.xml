@@ -46,6 +46,4 @@
     <string name="title_activity_register">Register New User</string>
     <string name="title_activity_polling">PollingActivity</string>
 
-    <string name="hello_world">Hello world!</string>
-
 </resources>

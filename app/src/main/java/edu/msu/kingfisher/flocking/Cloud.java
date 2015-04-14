@@ -71,11 +71,10 @@ public class Cloud {
                 }
             }
         }
-
         return status;
     }
 
-    public InputStream pollLoad(Game game, String user, String pass, boolean gameOver) {
+    public InputStream pollSave(Game game, String user, boolean gameOver) {
         // Create an XML packet with the information about the current game
         XmlSerializer xml = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -94,21 +93,21 @@ public class Cloud {
 
         final String xmlStr = writer.toString();
 
+        String postDataStr;
+        try {
+            postDataStr = "user=" + user + "&winner=null&xml=" + URLEncoder.encode(xmlStr, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    public InputStream pollLoad(String user) {
         /*
          * Convert the XML into HTTP POST data
          */
-        String postDataStr;
-        postDataStr = "user=&pass=&winner=null&xml=test";
-
-        /*try {
-            postDataStr = "xml=" + URLEncoder.encode(xmlStr, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }*/
-
-        /*
-         * Send the data to the server
-         */
+        String postDataStr = "user=" + user + "&xml=0&winner=null";
         byte[] postData = postDataStr.getBytes();
 
         InputStream stream = null;
@@ -131,20 +130,12 @@ public class Cloud {
                 return null;
             }
 
-            stream = conn.getInputStream();
+            stream = new InputStreamIntercept(conn.getInputStream());
 
         } catch (MalformedURLException e) {
             return null;
         } catch (IOException ex) {
             return null;
-        } finally {
-            if(stream != null) {
-                try {
-                    stream.close();
-                } catch(IOException ex) {
-                    // Fail silently
-                }
-            }
         }
         return stream;
     }

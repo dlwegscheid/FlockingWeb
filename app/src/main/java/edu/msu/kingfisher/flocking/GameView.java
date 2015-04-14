@@ -49,20 +49,6 @@ public class GameView extends View {
         return game.onTouchEvent(this, event);
     }
 
-    public void onPlace() {
-        CharSequence text;
-
-        if(game.canPlace()) {
-            text = "Bird Placed";
-            game.advanceGame(-1);
-        } else {
-            text = "Invalid Placement";
-            game.end();
-        }
-        Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
     public void loadInstanceState(Bundle bundle) {
         game.loadInstanceState(bundle, getContext());
     }
