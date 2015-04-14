@@ -13,8 +13,8 @@ public class LoginDlg extends DialogFragment {
     private String password;
     private boolean register = false;
 
-    private final static String USER_NAME = "LoginDlg.userName";
-    private final static String PASSWORD = "LoginDlg.password";
+    public final static String USER_NAME = "LoginDlg.userName";
+    public final static String PASSWORD = "LoginDlg.password";
     private final static String REGISTER = "LoginDlg.register";
 
     /**
@@ -85,6 +85,7 @@ public class LoginDlg extends DialogFragment {
                                 } else {
                                     Intent intent = new Intent(getActivity(), GameActivity.class);
                                     intent.putExtra(USER_NAME, user);
+                                    intent.putExtra(PASSWORD, password);
 
                                     startActivity(intent);
                                 }

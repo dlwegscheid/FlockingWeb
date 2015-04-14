@@ -5,14 +5,19 @@ import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 public class Cloud {
     private final static String LOGIN_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-login.php";
@@ -46,7 +51,7 @@ public class Cloud {
                 return Status.BAD_CONNECTION;
             }
 
-            stream = conn.getInputStream();
+            stream = new InputStreamIntercept(conn.getInputStream());
             //logStream(stream);
             status = isGoodResult(stream);
 
@@ -68,25 +73,78 @@ public class Cloud {
         return status;
     }
 
-    public InputStream pollLoad() {
-        String query = POLL_URL;
+    public InputStream pollLoad(Game game, String user, String pass, boolean gameOver) {
+        // Create an XML packet with the information about the current game
+        XmlSerializer xml = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+
         try {
-            URL url = new URL(query);
+            xml.setOutput(writer);
+
+            xml.startDocument("UTF-8", true);
+            game.saveXml(xml);
+            xml.endDocument();
+
+        } catch (IOException e) {
+            // This won't occur when writing to a string
+            return null;
+        }
+
+        final String xmlStr = writer.toString();
+
+        /*
+         * Convert the XML into HTTP POST data
+         */
+        String postDataStr;
+        postDataStr = "user=&pass=&winner=null&xml=test";
+
+        /*try {
+            postDataStr = "xml=" + URLEncoder.encode(xmlStr, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }*/
+
+        /*
+         * Send the data to the server
+         */
+        byte[] postData = postDataStr.getBytes();
+
+        InputStream stream = null;
+        try {
+            URL url = new URL(POLL_URL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            conn.setUseCaches(false);
+
+            OutputStream out = conn.getOutputStream();
+            out.write(postData);
+            out.close();
+
             int responseCode = conn.getResponseCode();
             if(responseCode != HttpURLConnection.HTTP_OK) {
                 return null;
             }
 
-            return conn.getInputStream();
+            stream = conn.getInputStream();
 
         } catch (MalformedURLException e) {
-            // Should never happen
             return null;
         } catch (IOException ex) {
             return null;
+        } finally {
+            if(stream != null) {
+                try {
+                    stream.close();
+                } catch(IOException ex) {
+                    // Fail silently
+                }
+            }
         }
+        return stream;
     }
 
     public Status isGoodResult(InputStream stream) {

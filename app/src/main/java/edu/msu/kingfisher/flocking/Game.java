@@ -368,7 +368,7 @@ public class  Game {
         }
     }
 
-    public void setNames(String p1, String p2) {
+    public void setUser(String p1, String p2) {
         playerOne = p1;
         playerTwo = p2;
     }

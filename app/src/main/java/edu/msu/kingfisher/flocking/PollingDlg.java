@@ -1,9 +1,11 @@
 package edu.msu.kingfisher.flocking;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Xml;
 import android.view.LayoutInflater;
@@ -49,22 +51,24 @@ public class PollingDlg extends DialogFragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                boolean fail = false;
                 Cloud cloud = new Cloud();
                 while(!close) {
-                    InputStream stream = cloud.pollLoad();
+                    InputStream stream = cloud.pollLoad(game, "", "", false);
 
                     if(close) {
                         return;
                     }
 
                     // Test for an error
-                    boolean fail = stream == null;
+                    fail = stream == null;
                     if(!fail) {
                         try {
                             XmlPullParser xml = Xml.newPullParser();
-                            xml.setInput(stream, "UTF-8");
 
                             //Cloud.logStream(stream);
+
+                            xml.setInput(stream, "UTF-8");
 
                             xml.nextTag();      // Advance to first tag
                             xml.require(XmlPullParser.START_TAG, null, "birdgame");
@@ -77,15 +81,17 @@ public class PollingDlg extends DialogFragment {
                                         return;
                                     }
 
-                                    // do something with the hatting tag...
+                                    // do something with the game xml
                                     game.loadXml(xml);
                                     break;
                                 }
                             } else if(status.equals("no")) {
                                 try {
+                                    String msg = xml.getAttributeValue(null, "msg");
                                     Thread.sleep(5000);
                                 } catch(InterruptedException e) {
                                     close = true;
+                                    fail = true;
                                 }
                             } else {
                                 fail = true;
@@ -103,6 +109,18 @@ public class PollingDlg extends DialogFragment {
                         }
                     }
                 }
+
+                if(!fail) {
+                    final Activity activity = getActivity();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(activity, SelectionActivity.class);
+                            activity.startActivityForResult(intent, 1);
+                        }
+                    });
+                }
+
             }
         }).start();
 
