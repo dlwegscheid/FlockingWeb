@@ -74,7 +74,7 @@ public class Cloud {
         return status;
     }
 
-    public InputStream pollSave(Game game, String user, boolean gameOver) {
+    public Status pollSave(Game game, String user) {
         // Create an XML packet with the information about the current game
         XmlSerializer xml = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -88,19 +88,64 @@ public class Cloud {
 
         } catch (IOException e) {
             // This won't occur when writing to a string
-            return null;
+            return Status.BAD_CONNECTION;
         }
 
         final String xmlStr = writer.toString();
 
+        String winner = "null";
+        if(game.isOver()) {
+            winner = "true";
+        }
+
         String postDataStr;
         try {
-            postDataStr = "user=" + user + "&winner=null&xml=" + URLEncoder.encode(xmlStr, "UTF-8");
+            postDataStr = "user=" + user + "&winner=" + winner + "&xml=" + URLEncoder.encode(xmlStr, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             return null;
         }
 
-        return null;
+        byte[] postData = postDataStr.getBytes();
+
+        InputStream stream = null;
+        Status status;
+        try {
+            URL url = new URL(POLL_URL);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Length", Integer.toString(postData.length));
+            conn.setUseCaches(false);
+
+            OutputStream out = conn.getOutputStream();
+            out.write(postData);
+            out.close();
+
+            int responseCode = conn.getResponseCode();
+            if(responseCode != HttpURLConnection.HTTP_OK) {
+                return Status.BAD_CONNECTION;
+            }
+
+            stream = new InputStreamIntercept(conn.getInputStream());
+            status = isGoodResult(stream);
+
+        } catch (MalformedURLException e) {
+            // Should never happen
+            return Status.BAD_CONNECTION;
+        } catch (IOException ex) {
+            return Status.BAD_CONNECTION;
+        } finally {
+            if(stream != null) {
+                try {
+                    stream.close();
+                } catch(IOException ex) {
+                    // Fail silently
+                }
+            }
+        }
+        return status;
     }
 
     public InputStream pollLoad(String user) {

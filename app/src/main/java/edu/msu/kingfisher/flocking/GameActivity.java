@@ -85,14 +85,8 @@ public class GameActivity extends ActionBarActivity {
         Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.show();
 
-        Game.State newState = game.getState();
-        if(newState ==  Game.State.PLAYER_ONE_WON) {
-            textView.setText(userName + " wins!");
-            placeButton.setText("Continue");
-        } else if (newState ==  Game.State.PLAYER_TWO_WON) {
-            textView.setText(password + " wins!");
-            placeButton.setText("Continue");
-        }
+        textView.setText("You lose!");
+        placeButton.setText("Continue");
     }
 
     @Override
@@ -122,7 +116,7 @@ public class GameActivity extends ActionBarActivity {
         }
     }
 
-    private void startPolling() {
+    public void startPolling() {
         PollingDlg pollDlg = new PollingDlg();
         pollDlg.setGame(game);
         pollDlg.show(this.getFragmentManager(), "polling");

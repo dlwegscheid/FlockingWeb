@@ -182,28 +182,14 @@ public class Bird {
         canvas.restore();
     }
 
-
-    /**
-     * Saving the bird XML
-     * @param xml
-     * @throws IOException
-     */
     public void saveXml(XmlSerializer xml) throws IOException {
         // save the bird into xml (see Step 5 for examples)
-
         xml.startTag(null, "bird");
         xml.attribute(null, "x", Float.toString(x));
         xml.attribute(null, "y", Float.toString(y));
         xml.attribute(null, "bitmapId", Integer.toString(id));
 
         xml.endTag(null, "bird");
-
-
-        //Log.i("XML String: ", xmlStr);
-
-        //return true;
-        return;
-
     }
 
 

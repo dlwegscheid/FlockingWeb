@@ -7,7 +7,6 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +27,8 @@ public class PollingDlg extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
         close = false;
+        GameActivity activity = (GameActivity)getActivity();
+        game = activity.getGame();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the title
@@ -43,13 +44,12 @@ public class PollingDlg extends DialogFragment {
         builder.setNegativeButton(R.string.quit_game, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                game.end();
                 close = true;
             }
         });
 
         final AlertDialog dlg = builder.create();
-        GameActivity activity = (GameActivity)getActivity();
-        game = activity.getGame();
         final String userName = activity.getUserName();
 
         new Thread(new Runnable() {
@@ -77,16 +77,7 @@ public class PollingDlg extends DialogFragment {
                             xml.require(XmlPullParser.START_TAG, null, "birdgame");
                             String status = xml.getAttributeValue(null, "status");
                             if(status.equals("yes")) {
-                                game.setLastPlace(true);
-                                close = true;
-                                final Activity activity = getActivity();
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent intent = new Intent(activity, SelectionActivity.class);
-                                        activity.startActivityForResult(intent, 1);
-                                    }
-                                });
+                                game.advanceGame(-1);
                             } else if(status.equals("update")) {
                                 if (xml.nextTag() == XmlPullParser.START_TAG) {
                                     if (close) {
@@ -95,24 +86,7 @@ public class PollingDlg extends DialogFragment {
 
                                     // do something with the game xml
                                     game.loadXml(xml);
-
-                                    final Activity activity = getActivity();
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Intent intent = new Intent(activity, SelectionActivity.class);
-                                            activity.startActivityForResult(intent, 1);
-                                        }
-                                    });
-                                    close = true;
-                                    break;
-                                }
-                            } else if(status.equals("no")) {
-                                try {
-                                    Thread.sleep(5000);
-                                } catch(InterruptedException e) {
-                                    close = true;
-                                    fail = true;
+                                    game.advanceGame(-1);
                                 }
                             } else {
                                 fail = true;
@@ -129,9 +103,15 @@ public class PollingDlg extends DialogFragment {
                             }
                         }
                     }
+                    if(fail) {
+                        try {
+                            Thread.sleep(5000);
+                        } catch(InterruptedException ex) {
+                            close = true;
+                        }
+                    }
                 }
                 dlg.dismiss();
-
             }
         }).start();
 

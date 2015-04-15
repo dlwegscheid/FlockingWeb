@@ -9,8 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -18,13 +16,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -117,29 +109,21 @@ public class  Game {
     private final static String IDS = "Game.ids";
     private final static String DRAGGING_INDEX = "Game.draggingIndex";
     private final static String NEXT_ID = "Game.nextId";
-    private final static String PLAYER_ONE = "Game.playerOne";
-    private final static String PLAYER_TWO = "Game.playerTwo";
+    private final static String USER_NAME = "Game.userName";
+    private final static String PASSWORD = "Game.password";
     private final static String STATE = "Game.state";
-    private final static String ORDER = "Game.order";
-    private final static String LAST = "Game.last";
 
     public enum State {
-        START,
-        PLAYER_ONE_SELECTING, PLAYER_TWO_SELECTING,
-        PLAYER_ONE_PLACING, PLAYER_TWO_PLACING,
-        PLAYER_ONE_WON, PLAYER_TWO_WON,
+        START, POLLING, SELECTING_FIRST, PLACING_FIRST, SELECTING_SECOND, PLACING_SECOND, END
     }
 
     private State state = State.START;
-    private boolean player1First = true;
 
     /**
      * The names of the players in the game.
      */
-    private String playerOne;
-    private String playerTwo;
-
-    private boolean lastPlace = true;
+    private String userName;
+    private String password;
 
     public Game(Context context, View parent) {
         parentContext = context;
@@ -247,12 +231,10 @@ public class  Game {
         float [] locations = bundle.getFloatArray(LOCATIONS);
         int [] ids = bundle.getIntArray(IDS);
         int draggingIndex = bundle.getInt(DRAGGING_INDEX);
-        playerOne = bundle.getString(PLAYER_ONE);
-        playerTwo = bundle.getString(PLAYER_TWO);
+        userName = bundle.getString(USER_NAME);
+        password = bundle.getString(PASSWORD);
         state = (State) bundle.getSerializable(STATE);
-        player1First = bundle.getBoolean(ORDER);
         int nextId = bundle.getInt(NEXT_ID);
-        lastPlace = bundle.getBoolean(LAST);
 
         birds.clear();
         dragging = null;
@@ -300,124 +282,68 @@ public class  Game {
         }
 
         bundle.putFloatArray(LOCATIONS, locations);
-        bundle.putIntArray(IDS,  ids);
+        bundle.putIntArray(IDS, ids);
         bundle.putInt(DRAGGING_INDEX, draggingIndex);
         bundle.putInt(NEXT_ID, nextId);
-        bundle.putString(PLAYER_ONE, playerOne);
-        bundle.putString(PLAYER_TWO, playerTwo);
+        bundle.putString(USER_NAME, userName);
+        bundle.putString(PASSWORD, password);
         bundle.putSerializable(STATE, state);
-        bundle.putBoolean(ORDER, player1First);
-        bundle.putBoolean(LAST, lastPlace);
     }
 
-    private void startSelectionActivity(String name){
+    private void startSelectionActivity(){
         Intent intent = new Intent(parentContext, SelectionActivity.class);
-        intent.putExtra("PLAYER_NAME", name);
         ((Activity)parentContext).startActivityForResult(intent, 1);
     }
 
     public void advanceGame(int birdID) {
-        switch (state) {
+        switch(state) {
             case START:
-                state = State.PLAYER_ONE_SELECTING;
-                startSelectionActivity(playerOne);
+                state = State.SELECTING_SECOND;
+                startSelectionActivity();
                 break;
 
-            case PLAYER_ONE_SELECTING:
-                if(player1First) {
-                    state = State.PLAYER_TWO_SELECTING;
-                    next = new Bird(parentContext, birdID);
-                    startSelectionActivity(playerTwo);
-                } else {
-                    state = State.PLAYER_TWO_PLACING;
-                    dragging = next;
-                    birds.add(dragging);
-                    next = new Bird(parentContext, birdID);
-                }
+            case SELECTING_FIRST:
+                dragging = new Bird(parentContext, birdID);
+                birds.add(dragging);
+                state = State.PLACING_FIRST;
                 break;
 
-            case PLAYER_TWO_SELECTING:
-                if(player1First) {
-                    state = State.PLAYER_ONE_PLACING;
-                    dragging = next;
-                    birds.add(dragging);
-                    next = new Bird(parentContext, birdID);
-                } else {
-                    state = State.PLAYER_ONE_SELECTING;
-                    next = new Bird(parentContext, birdID);
-                    startSelectionActivity(playerOne);
-                }
+            case PLACING_FIRST:
+                dragging = null;
+                state = State.SELECTING_SECOND;
+                startSelectionActivity();
                 break;
 
-            case PLAYER_ONE_PLACING:
-                if(player1First) {
-                    state = State.PLAYER_TWO_PLACING;
-                    dragging = next;
-                    birds.add(dragging);
-                    next = null;
-                } else {
-                    dragging = null;
-                    player1First = !player1First;
-                    state = State.PLAYER_ONE_SELECTING;
-                    startSelectionActivity(playerOne);
-                }
+            case SELECTING_SECOND:
+                dragging = new Bird(parentContext, birdID);
+                birds.add(dragging);
+                state = State.PLACING_SECOND;
                 break;
 
-            case PLAYER_TWO_PLACING:
-                if(player1First) {
-                    dragging = null;
-                    player1First = !player1First;
-                    state = State.PLAYER_TWO_SELECTING;
-                    startSelectionActivity(playerTwo);
-                } else {
-                    state = State.PLAYER_ONE_PLACING;
-                    dragging = next;
-                    birds.add(dragging);
-                    next = null;
-                }
+            case PLACING_SECOND:
+                dragging = null;
+                state = State.POLLING;
+                ((GameActivity)parentContext).startPolling();
                 break;
-        }
 
-        // TEMPORARY!!!
-        try {
-            XmlSerializer xml = Xml.newSerializer();
-            StringWriter writer = new StringWriter();
-
-            xml.setOutput(writer);
-            xml.startDocument("UTF-8", true);
-            saveXml(xml);
-
-            xml.endDocument();
-
-            String str = writer.toString();
-            Log.e("FinalXMLString: ", str);
-        } catch (IOException e) {
-            e.printStackTrace();
+            case POLLING:
+                state = State.SELECTING_FIRST;
+                startSelectionActivity();
+                break;
         }
     }
 
     public void setUser(String p1, String p2) {
-        playerOne = p1;
-        playerTwo = p2;
+        userName = p1;
+        password = p2;
     }
 
     public void end() {
         Intent intent = new Intent(parentContext, ScoreActivity.class);
         intent.putExtra("ScoreActivity.score", birds.size()-1);
 
-        switch (state) {
-            case PLAYER_ONE_PLACING:
-                state = State.PLAYER_TWO_WON;
-            case PLAYER_TWO_WON:
-                intent.putExtra("ScoreActivity.winner", playerTwo + " wins!");
-                break;
-
-            case PLAYER_TWO_PLACING:
-                state = State.PLAYER_ONE_WON;
-            case PLAYER_ONE_WON:
-                intent.putExtra("ScoreActivity.winner", playerOne + " wins!");
-                break;
-        }
+        state = State.END;
+        intent.putExtra("ScoreActivity.winner", "You lose!");
         parentContext.startActivity(intent);
 
         dragging = null;
@@ -428,81 +354,38 @@ public class  Game {
         return state;
     }
 
-    public void setLastPlace(boolean lastPlace) {
-        this.lastPlace = lastPlace;
-    }
-
     public void saveXml(XmlSerializer xml) throws IOException {
         // save the state of the game into xml (see Step 5 for examples)
         // you will have to call bird.saveXml(xml) for each bird in the collection
-
-
         xml.startTag(null, "game");
-
 
         for(Bird bird : birds) {
             bird.saveXml(xml);
         }
 
         xml.endTag(null, "game");
-
-
-
-//        Log.e("SaveXml", "String");
-//        InputStream xmlStrStream = new ByteArrayInputStream(xmlStr.getBytes(StandardCharsets.UTF_8));
-//        logStream(xmlStrStream);
-
-
-        //Log.i("XML String: ", xmlStr);
-
-
-        //return true;
-        return;
     }
 
     public void loadXml(XmlPullParser xmlR) throws IOException, XmlPullParserException {
         // load the game from xml
         // you will have to call bird.loadXml(xml) for each bird in the collection
 
+        xmlR.nextTag();
+        xmlR.require(XmlPullParser.START_TAG, null, "game");
 
-            xmlR.require(XmlPullParser.START_TAG, null, "game");
+        while(xmlR.nextTag()==XmlPullParser.START_TAG) {
+            float x = Float.parseFloat(xmlR.getAttributeValue(null, "x"));
+            float y = Float.parseFloat(xmlR.getAttributeValue(null, "y"));
+            int id = Integer.parseInt(xmlR.getAttributeValue(null, "bitmapId"));
 
-            String x;
-            String y;
-            Integer id;
-
-            try {
-
-                xmlR.nextTag();
-
-                x = xmlR.getAttributeValue(null, "x");
-                y = xmlR.getAttributeValue(null, "y");
-                id = Integer.parseInt(xmlR.getAttributeValue(null, "bitmapId"));
-
-
-
-            } catch (XmlPullParserException ex){
-                ex.printStackTrace();
-            }
-
-            dragging = null;
-
-    }
-
-    // Test Code to read stream.
-    public static void logStream(InputStream stream) {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(stream));
-
-        Log.e("476", "logStream: If you leave this in, code after will not work!");
-        try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Log.e("476", line);
-            }
-        } catch (IOException ex) {
-            return;
+            Bird bird = new Bird(parentContext, id);
+            bird.setX(x);
+            bird.setY(y);
+            birds.add(bird);
         }
     }
 
+    public boolean isOver() {
+        return state == State.END;
+    }
 }

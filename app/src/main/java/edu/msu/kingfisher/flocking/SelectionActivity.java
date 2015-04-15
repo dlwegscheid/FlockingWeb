@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 public class SelectionActivity extends ActionBarActivity {
 
-    private String NAME = "";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,23 +18,9 @@ public class SelectionActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if(intent != null){
             TextView textView = (TextView)findViewById(R.id.Message);
-            NAME = intent.getStringExtra("PLAYER_NAME");
-            String newMessage = NAME + ": Please select your bird";
+            String newMessage = "Please select your bird!";
             textView.setText(newMessage);
         }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        NAME = savedInstanceState.getString("PLAYER_NAME");
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("PLAYER_NAME", NAME);
-        super.onSaveInstanceState(outState);
-
     }
 
     public void imageClicked(View view){
