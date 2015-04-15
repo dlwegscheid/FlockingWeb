@@ -388,4 +388,20 @@ public class  Game {
     public boolean isOver() {
         return state == State.END;
     }
+
+    public void test() {
+        for(int i=0; i<2; i++) {
+            Bird bird1 = new Bird(parentContext, R.drawable.bananaquit);
+            Bird bird2 = new Bird(parentContext, R.drawable.swallow);
+            bird1.setX(100+i*100);
+            bird1.setY(0);
+            bird2.setX(0);
+            bird2.setY(100+i*100);
+            birds.add(bird2);
+            birds.add(bird1);
+        }
+
+        //save
+        //load
+    }
 }

@@ -46,7 +46,7 @@ public class GameActivity extends ActionBarActivity {
             gameView.loadInstanceState(bundle);
         } else {
             //gameView.advanceGame(-1);
-            startPolling();
+            //startPolling();
         }
     }
 
@@ -73,7 +73,8 @@ public class GameActivity extends ActionBarActivity {
     }
 
     public void onPlace(View view) {
-        CharSequence text;
+        game.test();
+        /*CharSequence text;
 
         if(game.canPlace()) {
             text = "Bird Placed";
@@ -86,7 +87,7 @@ public class GameActivity extends ActionBarActivity {
         toast.show();
 
         textView.setText("You lose!");
-        placeButton.setText("Continue");
+        placeButton.setText("Continue");*/
     }
 
     @Override
