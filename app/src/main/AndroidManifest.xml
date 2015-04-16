@@ -36,10 +36,6 @@
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
-        <activity
-            android:name=".PollingActivity"
-            android:label="@string/title_activity_polling" >
-        </activity>
     </application>
 
 </manifest>
