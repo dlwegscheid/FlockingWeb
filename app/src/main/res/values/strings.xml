@@ -4,7 +4,8 @@
     <string name="app_name">Kingfisher Flocking Web</string>
     <string name="action_settings">Settings</string>
     <string name="quit_game">Quit Game</string>
-    <string name="title_activity_selection">Select your flocker!</string>
+    <string name="title_activity_selection">Select your bird</string>
+    <string name="place">Place your bird</string>
     <string name="login">Log in</string>
     <string name="register">Register</string>
     <string name="ostrich">Ostrich</string>
@@ -23,6 +24,7 @@
     <string name="game_title">The Flocking Game</string>
     <string name="title_activity_score">Results</string>
     <string name="reset">Reset</string>
+    <string name="back_to_login">Back to Login</string>
     <string name="rules">Rules</string>
     <string name="login_failure">Invalid username or password</string>
     <string name="passwords_dont_match">Passwords do not match, try again</string>

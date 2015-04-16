@@ -64,7 +64,14 @@ public class GameActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_quit) {
+            game.setWinner(false);
+
+            SavingDlg saveDlg = new SavingDlg();
+            saveDlg.setGame(game);
+            saveDlg.show(this.getFragmentManager(), "saving");
+
+            game.end();
             return true;
         }
 

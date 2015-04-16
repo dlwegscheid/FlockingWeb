@@ -46,4 +46,8 @@ public class SelectionActivity extends ActionBarActivity {
         Toast.makeText(this, "Choice Received", Toast.LENGTH_SHORT).show();
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }
