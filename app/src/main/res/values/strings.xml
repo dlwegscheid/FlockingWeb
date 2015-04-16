@@ -32,6 +32,7 @@
     <string name="logging_in">Logging in&#8230;</string>
     <string name="registering">Registering&#8230;</string>
     <string name="polling">Polling&#8230;</string>
+    <string name="saving">Saving&#8230;</string>
     <string name="rules_text">\t\tPlease enter both players\' names into the text fields and then press \'Prepare your flapper\'.\n\n\t\t
        The game will then present a bird selection screen for the first player.
         While holding the device so the other player cannot see, player one will select a bird from 5 different birds given.

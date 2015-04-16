@@ -22,8 +22,6 @@ import java.net.URLEncoder;
 public class Cloud {
     private final static String LOGIN_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-login.php";
     private final static String REGISTER_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-createuser.php";
-    private final static String SAVE_URL = "";
-    private final static String LOAD_URL = "";
     private final static String POLL_URL = "http://webdev.cse.msu.edu/~merril51/cse476/project2/birdgame-poll.php";
     private final static String MAGIC = "18qu27wy36et45r";
     private static final String UTF8 = "UTF-8";
@@ -82,7 +80,6 @@ public class Cloud {
         try {
             xml.setOutput(writer);
 
-            xml.startDocument("UTF-8", true);
             game.saveXml(xml);
             xml.endDocument();
 

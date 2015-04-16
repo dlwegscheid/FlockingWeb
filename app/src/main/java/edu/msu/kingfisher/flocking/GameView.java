@@ -60,4 +60,8 @@ public class GameView extends View {
     public Game getGame() {
         return game;
     }
+
+    public void testLoadSave() {
+        game.testLoadSave(this);
+    }
 }

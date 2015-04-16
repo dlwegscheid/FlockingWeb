@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,6 +19,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 
 /**
@@ -70,8 +74,6 @@ public class  Game {
      */
     private Bird dragging = null;
 
-    private Bird next = null;
-
     /**
      * The view of the game
      */
@@ -108,10 +110,10 @@ public class  Game {
     private final static String LOCATIONS = "Game.locations";
     private final static String IDS = "Game.ids";
     private final static String DRAGGING_INDEX = "Game.draggingIndex";
-    private final static String NEXT_ID = "Game.nextId";
     private final static String USER_NAME = "Game.userName";
     private final static String PASSWORD = "Game.password";
     private final static String STATE = "Game.state";
+    private final static String WINNER = "Game.winner";
 
     public enum State {
         START, POLLING, SELECTING_FIRST, PLACING_FIRST, SELECTING_SECOND, PLACING_SECOND, END
@@ -124,6 +126,8 @@ public class  Game {
      */
     private String userName;
     private String password;
+
+    private boolean winner;
 
     public Game(Context context, View parent) {
         parentContext = context;
@@ -234,7 +238,7 @@ public class  Game {
         userName = bundle.getString(USER_NAME);
         password = bundle.getString(PASSWORD);
         state = (State) bundle.getSerializable(STATE);
-        int nextId = bundle.getInt(NEXT_ID);
+        winner = bundle.getBoolean(WINNER);
 
         birds.clear();
         dragging = null;
@@ -250,11 +254,6 @@ public class  Game {
             }
         }
 
-        next = null;
-        if(nextId != -1) {
-            next = new Bird(context, nextId);
-        }
-
         if(dragging != null) {
             birds.remove(dragging);
             birds.add(dragging);
@@ -265,11 +264,6 @@ public class  Game {
         float [] locations = new float[birds.size() * 2];
         int [] ids = new int[birds.size()];
         int draggingIndex = -1;
-
-        int nextId = -1;
-        if(next != null) {
-            nextId = next.getId();
-        }
 
         for(int i=0;  i<birds.size(); i++) {
             Bird bird = birds.get(i);
@@ -284,10 +278,10 @@ public class  Game {
         bundle.putFloatArray(LOCATIONS, locations);
         bundle.putIntArray(IDS, ids);
         bundle.putInt(DRAGGING_INDEX, draggingIndex);
-        bundle.putInt(NEXT_ID, nextId);
         bundle.putString(USER_NAME, userName);
         bundle.putString(PASSWORD, password);
         bundle.putSerializable(STATE, state);
+        bundle.putBoolean(WINNER, winner);
     }
 
     private void startSelectionActivity(){
@@ -323,7 +317,10 @@ public class  Game {
             case PLACING_SECOND:
                 dragging = null;
                 state = State.POLLING;
-                ((GameActivity)parentContext).startPolling();
+
+                SavingDlg saveDlg = new SavingDlg();
+                saveDlg.setGame(this);
+                saveDlg.show(((GameActivity)parentContext).getFragmentManager(), "saving");
                 break;
 
             case POLLING:
@@ -333,21 +330,24 @@ public class  Game {
         }
     }
 
-    public void setUser(String p1, String p2) {
-        userName = p1;
-        password = p2;
+    public void setUser(String user, String pass) {
+        userName = user;
+        password = pass;
     }
 
     public void end() {
         Intent intent = new Intent(parentContext, ScoreActivity.class);
-        intent.putExtra("ScoreActivity.score", birds.size()-1);
+        intent.putExtra(ScoreActivity.SCORE, birds.size()-1);
 
         state = State.END;
-        intent.putExtra("ScoreActivity.winner", "You lose!");
+        if(winner) {
+            intent.putExtra(ScoreActivity.WINNER, "You win!");
+        } else {
+            intent.putExtra(ScoreActivity.WINNER, "You lose!");
+        }
         parentContext.startActivity(intent);
 
         dragging = null;
-        next = null;
     }
 
     public State getState() {
@@ -355,22 +355,17 @@ public class  Game {
     }
 
     public void saveXml(XmlSerializer xml) throws IOException {
-        // save the state of the game into xml (see Step 5 for examples)
-        // you will have to call bird.saveXml(xml) for each bird in the collection
         xml.startTag(null, "game");
-
         for(Bird bird : birds) {
             bird.saveXml(xml);
         }
-
         xml.endTag(null, "game");
     }
 
     public void loadXml(XmlPullParser xmlR) throws IOException, XmlPullParserException {
-        // load the game from xml
-        // you will have to call bird.loadXml(xml) for each bird in the collection
+        birds.clear();
+        dragging = null;
 
-        xmlR.nextTag();
         xmlR.require(XmlPullParser.START_TAG, null, "game");
 
         while(xmlR.nextTag()==XmlPullParser.START_TAG) {
@@ -382,6 +377,8 @@ public class  Game {
             bird.setX(x);
             bird.setY(y);
             birds.add(bird);
+
+            Cloud.skipToEndTag(xmlR);
         }
     }
 
@@ -389,19 +386,45 @@ public class  Game {
         return state == State.END;
     }
 
-    public void test() {
-        for(int i=0; i<2; i++) {
-            Bird bird1 = new Bird(parentContext, R.drawable.bananaquit);
-            Bird bird2 = new Bird(parentContext, R.drawable.swallow);
-            bird1.setX(100+i*100);
-            bird1.setY(0);
-            bird2.setX(0);
-            bird2.setY(100+i*100);
-            birds.add(bird2);
-            birds.add(bird1);
+    public void testLoadSave(View view) {
+        //save
+        XmlSerializer xml = Xml.newSerializer();
+        StringWriter writer = new StringWriter();
+
+        try {
+            xml.setOutput(writer);
+
+            xml.startDocument("UTF-8", true);
+            saveXml(xml);
+            xml.endDocument();
+
+        } catch (IOException e) {
+        }
+        String xmlString = writer.toString();
+        Log.i("476", xmlString);
+
+        //load
+        XmlPullParser xmlR = Xml.newPullParser();
+        try {
+            xmlR.setInput(new StringReader(xmlString));
+            loadXml(xmlR);
+        } catch(XmlPullParserException ex) {
+        } catch(IOException ex) {
         }
 
-        //save
-        //load
+        view.invalidate();
+    }
+
+    public void setWinner(boolean winner) {
+        this.winner = winner;
+        state = State.END;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

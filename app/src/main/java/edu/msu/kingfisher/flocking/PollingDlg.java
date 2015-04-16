@@ -78,6 +78,7 @@ public class PollingDlg extends DialogFragment {
                             String status = xml.getAttributeValue(null, "status");
                             if(status.equals("yes")) {
                                 game.advanceGame(-1);
+                                close = true;
                             } else if(status.equals("update")) {
                                 if (xml.nextTag() == XmlPullParser.START_TAG) {
                                     if (close) {
@@ -85,8 +86,23 @@ public class PollingDlg extends DialogFragment {
                                     }
 
                                     // do something with the game xml
+                                    game.setState(Game.State.POLLING);
                                     game.loadXml(xml);
                                     game.advanceGame(-1);
+                                    close = true;
+                                }
+                            } else if(status.equals("gameover")) {
+                                String user = xml.getAttributeValue(null, "winner");
+                                if (xml.nextTag() == XmlPullParser.START_TAG) {
+                                    if (close) {
+                                        return;
+                                    }
+
+                                    // do something with the game xml
+                                    game.loadXml(xml);
+                                    game.setWinner(user.equals(game.getUserName()));
+                                    game.end();
+                                    close = true;
                                 }
                             } else {
                                 fail = true;

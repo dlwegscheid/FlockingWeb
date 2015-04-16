@@ -32,7 +32,7 @@ public class SavingDlg extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the title
-        builder.setTitle(R.string.polling);
+        builder.setTitle(R.string.saving);
 
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -67,6 +67,13 @@ public class SavingDlg extends DialogFragment {
                         close = true;
                     }
                 }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((GameActivity)getActivity()).startPolling();
+                    }
+                });
+
                 dlg.dismiss();
             }
         }).start();

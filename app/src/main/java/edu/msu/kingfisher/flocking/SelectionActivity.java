@@ -15,12 +15,10 @@ public class SelectionActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
-        Intent intent = getIntent();
-        if(intent != null){
-            TextView textView = (TextView)findViewById(R.id.Message);
-            String newMessage = "Please select your bird!";
-            textView.setText(newMessage);
-        }
+
+        TextView textView = (TextView)findViewById(R.id.Message);
+        String newMessage = "Please select your bird!";
+        textView.setText(newMessage);
     }
 
     public void imageClicked(View view){

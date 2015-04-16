@@ -45,8 +45,7 @@ public class GameActivity extends ActionBarActivity {
         if(bundle != null) {
             gameView.loadInstanceState(bundle);
         } else {
-            //gameView.advanceGame(-1);
-            //startPolling();
+            startPolling();
         }
     }
 
@@ -73,21 +72,27 @@ public class GameActivity extends ActionBarActivity {
     }
 
     public void onPlace(View view) {
-        game.test();
-        /*CharSequence text;
+        if(game.getState() == Game.State.END) {
+            game.end();
+        }
+
+        CharSequence text;
 
         if(game.canPlace()) {
             text = "Bird Placed";
             game.advanceGame(-1);
         } else {
             text = "Invalid Placement";
+            game.setWinner(false);
+
+            SavingDlg saveDlg = new SavingDlg();
+            saveDlg.setGame(game);
+            saveDlg.show(this.getFragmentManager(), "saving");
+
             game.end();
         }
         Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.show();
-
-        textView.setText("You lose!");
-        placeButton.setText("Continue");*/
     }
 
     @Override
