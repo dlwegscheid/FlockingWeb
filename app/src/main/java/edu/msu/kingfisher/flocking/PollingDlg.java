@@ -42,8 +42,15 @@ public class PollingDlg extends DialogFragment {
         builder.setNegativeButton(R.string.quit_game, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                game.end();
                 close = true;
+
+                game.setWinner(false);
+
+                SavingDlg saveDlg = new SavingDlg();
+                saveDlg.setGame(game);
+                saveDlg.show(getActivity().getFragmentManager(), "saving");
+
+                game.end();
             }
         });
 
