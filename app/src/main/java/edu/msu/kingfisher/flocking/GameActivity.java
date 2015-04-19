@@ -21,11 +21,11 @@ public class GameActivity extends ActionBarActivity {
     private TextView textView;
     private Button placeButton;
 
-    private final static String MESSAGE_TEXT = "GameActivity.messageText";
-    private final static String BUTTON_TEXT = "GameActivity.buttonText";
+    public final static String MESSAGE_TEXT = "GameActivity.messageText";
+    public final static String BUTTON_TEXT = "GameActivity.buttonText";
+    public final static String USER_NAME = "GameActivity.userName";
 
     private String userName;
-    private String password;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -39,7 +39,7 @@ public class GameActivity extends ActionBarActivity {
 
         Bundle extras = getIntent().getExtras();
         userName = extras.getString(LoginDlg.USER_NAME);
-        password = extras.getString(LoginDlg.PASSWORD);
+        String password = extras.getString(LoginDlg.PASSWORD);
         game.setUser(userName, password);
 
         if(bundle != null) {
@@ -95,8 +95,6 @@ public class GameActivity extends ActionBarActivity {
             SavingDlg saveDlg = new SavingDlg();
             saveDlg.setGame(game);
             saveDlg.show(this.getFragmentManager(), "saving");
-
-            game.end();
         }
         Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
         toast.show();
@@ -106,15 +104,19 @@ public class GameActivity extends ActionBarActivity {
     protected void onSaveInstanceState(Bundle bundle) {
         bundle.putString(MESSAGE_TEXT, textView.getText().toString());
         bundle.putString(BUTTON_TEXT, placeButton.getText().toString());
+        bundle.putString(USER_NAME, userName);
         super.onSaveInstanceState(bundle);
         gameView.saveInstanceState(bundle);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        textView.setText(savedInstanceState.getString(MESSAGE_TEXT));
-        placeButton.setText(savedInstanceState.getString(BUTTON_TEXT));
-        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState != null) {
+            textView.setText(savedInstanceState.getString(MESSAGE_TEXT));
+            placeButton.setText(savedInstanceState.getString(BUTTON_TEXT));
+            userName = savedInstanceState.getString(USER_NAME);
+            super.onRestoreInstanceState(savedInstanceState);
+        }
     }
 
     @Override
