@@ -51,7 +51,7 @@ public class Cloud {
                 return Status.BAD_CONNECTION;
             }
 
-            stream = new InputStreamIntercept(conn.getInputStream());
+            stream = conn.getInputStream();
             //logStream(stream);
             status = isGoodResult(stream);
 
@@ -125,7 +125,7 @@ public class Cloud {
                 return Status.BAD_CONNECTION;
             }
 
-            stream = new InputStreamIntercept(conn.getInputStream());
+            stream = conn.getInputStream();
             status = isGoodResult(stream);
 
         } catch (MalformedURLException e) {
@@ -172,7 +172,7 @@ public class Cloud {
                 return null;
             }
 
-            stream = new InputStreamIntercept(conn.getInputStream());
+            stream = conn.getInputStream();
 
         } catch (MalformedURLException e) {
             return null;
@@ -182,7 +182,7 @@ public class Cloud {
         return stream;
     }
 
-    public Status isGoodResult(InputStream stream) {
+    private Status isGoodResult(InputStream stream) {
         /**
          * Create an XML parser for the result
          */

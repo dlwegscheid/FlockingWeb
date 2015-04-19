@@ -21,8 +21,8 @@ public class GameActivity extends ActionBarActivity {
     private TextView textView;
     private Button placeButton;
 
-    public final static String MESSAGE_TEXT = "GameActivity.messageText";
-    public final static String BUTTON_TEXT = "GameActivity.buttonText";
+    private final static String MESSAGE_TEXT = "GameActivity.messageText";
+    private final static String BUTTON_TEXT = "GameActivity.buttonText";
 
     private String userName;
     private String password;

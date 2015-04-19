@@ -41,7 +41,7 @@ public class  Game {
     /**
      * Collection of birds
      */
-    public ArrayList<Bird> birds = new ArrayList<>();
+    private ArrayList<Bird> birds = new ArrayList<>();
 
     /**
      * The size of the game in pixels
@@ -92,17 +92,17 @@ public class  Game {
     /**
      * Width of outline
      */
-    final static int BRUSH_WIDTH = 6;
+    private final static int BRUSH_WIDTH = 6;
 
     /**
      * Percentage of the display width or height that is occupied by the game
      */
-    final static float SCALE_IN_VIEW = 0.9f;
+    private final static float SCALE_IN_VIEW = 0.9f;
 
     /**
      * Ratio of board height to ostrich height
      */
-    final static float OSTRICH_RATIO = 1.5f;
+    private final static float OSTRICH_RATIO = 1.5f;
 
     /**
      * The name of the bundle keys to save the puzzle
@@ -384,35 +384,6 @@ public class  Game {
 
     public boolean isOver() {
         return state == State.END;
-    }
-
-    public void testLoadSave(View view) {
-        //save
-        XmlSerializer xml = Xml.newSerializer();
-        StringWriter writer = new StringWriter();
-
-        try {
-            xml.setOutput(writer);
-
-            xml.startDocument("UTF-8", true);
-            saveXml(xml);
-            xml.endDocument();
-
-        } catch (IOException e) {
-        }
-        String xmlString = writer.toString();
-        Log.i("476", xmlString);
-
-        //load
-        XmlPullParser xmlR = Xml.newPullParser();
-        try {
-            xmlR.setInput(new StringReader(xmlString));
-            loadXml(xmlR);
-        } catch(XmlPullParserException ex) {
-        } catch(IOException ex) {
-        }
-
-        view.invalidate();
     }
 
     public void setWinner(boolean winner) {

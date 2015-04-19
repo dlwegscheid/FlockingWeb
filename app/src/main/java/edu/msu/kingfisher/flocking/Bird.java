@@ -6,8 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
@@ -91,33 +89,34 @@ public class Bird {
         this.y = y;
     }
 
-    public float getPixelLeft() {
-        return x*gameSize+marginX-bird.getWidth()/2*scaleFactor;
+    private float getPixelLeft() {
+        return x * gameSize + marginX - bird.getWidth() / 2 * scaleFactor;
     }
 
-    public float getPixelTop() {
-        return y*gameSize+marginY-bird.getHeight()/2*scaleFactor;
+    private float getPixelTop() {
+        return y * gameSize + marginY - bird.getHeight() / 2 * scaleFactor;
     }
 
     private void setRect() {
         float left = getPixelLeft();
         float top = getPixelTop();
 
-        rect.set((int)(left),
-                (int)(top),
-                (int)(left+bird.getWidth()*scaleFactor),
-                (int)(top+bird.getHeight()*scaleFactor));
+        rect.set((int) (left),
+                (int) (top),
+                (int) (left + bird.getWidth() * scaleFactor),
+                (int) (top + bird.getHeight() * scaleFactor));
     }
 
     /**
      * Collision detection between two birds. This object is
      * compared to the one referenced by other
+     *
      * @param other Bird to compare to.
      * @return True if there is any overlap between the two birds.
      */
     public boolean collisionTest(Bird other) {
         // Do the rectangles overlap?
-        if(!Rect.intersects(rect, other.rect)) {
+        if (!Rect.intersects(rect, other.rect)) {
             return false;
         }
 
@@ -126,16 +125,16 @@ public class Bird {
         overlap.intersect(other.rect);
 
         // We have overlap. Now see if we have any pixels in common
-        for(int r=overlap.top; r<overlap.bottom;  r++) {
-            int aY = (int)(Math.abs(r - getPixelTop())/scaleFactor);
-            int bY = (int)(Math.abs(r - other.getPixelTop())/scaleFactor);
+        for (int r = overlap.top; r < overlap.bottom; r++) {
+            int aY = (int) (Math.abs(r - getPixelTop()) / scaleFactor);
+            int bY = (int) (Math.abs(r - other.getPixelTop()) / scaleFactor);
 
-            for(int c=overlap.left;  c<overlap.right;  c++) {
+            for (int c = overlap.left; c < overlap.right; c++) {
 
-                int aX = (int)(Math.abs(c - getPixelLeft())/scaleFactor);
-                int bX = (int)(Math.abs(c - other.getPixelLeft())/scaleFactor);
+                int aX = (int) (Math.abs(c - getPixelLeft()) / scaleFactor);
+                int bX = (int) (Math.abs(c - other.getPixelLeft()) / scaleFactor);
 
-                if( (bird.getPixel(aX, aY) & 0x80000000) != 0 &&
+                if ((bird.getPixel(aX, aY) & 0x80000000) != 0 &&
                         (other.bird.getPixel(bX, bY) & 0x80000000) != 0) {
                     //Log.i("collision", "Overlap " + r + "," + c);
                     return true;
@@ -148,10 +147,11 @@ public class Bird {
 
     /**
      * Draw the bird
-     * @param canvas Canvas we are drawing on
-     * @param mX Margin x value in pixels
-     * @param mY Margin y value in pixels
-     * @param gSize Size we draw the game in pixels
+     *
+     * @param canvas  Canvas we are drawing on
+     * @param mX      Margin x value in pixels
+     * @param mY      Margin y value in pixels
+     * @param gSize   Size we draw the game in pixels
      * @param sFactor Amount we scale the birds when we draw them
      */
     public void draw(Canvas canvas, int mX, int mY, int gSize, float sFactor) {
@@ -181,29 +181,4 @@ public class Bird {
 
         xml.endTag(null, "bird");
     }
-
-
-    public void loadXml(XmlPullParser xmlR) throws IOException, XmlPullParserException {
-        // load the bird from xml
-
-        try {
-
-            xmlR.nextTag();      // Advance to first tag
-            xmlR.require(XmlPullParser.START_TAG, null, "bird");
-
-            x = Float.parseFloat(xmlR.getAttributeValue(null, "x"));
-            y = Float.parseFloat(xmlR.getAttributeValue(null, "y"));
-            id = Integer.parseInt(xmlR.getAttributeValue(null, "bitmapId"));
-
-
-            // We are done
-        } catch(XmlPullParserException ex) {
-            return;
-        } catch(IOException ex) {
-            return;
-        }
-
-
-    }
-
 }

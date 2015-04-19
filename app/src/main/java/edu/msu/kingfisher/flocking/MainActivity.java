@@ -39,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void loadInstanceState(Bundle bundle) {
+    private void loadInstanceState(Bundle bundle) {
         String userName = bundle.getString(USER_NAME);
         String password = bundle.getString(PASSWORD);
 
